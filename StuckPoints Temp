@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPT Stuck Point Log - Interactive Worksheet</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49'
+            },
+            tealbrand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+        font-size: 11pt !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+      .shadow-sm, .shadow, .shadow-md, .shadow-lg {
+        box-shadow: none !important;
+      }
+      .border {
+        border-color: #cbd5e1 !important;
+      }
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+      }
+      th, td {
+        border: 1px solid #94a3b8 !important;
+        padding: 6px 8px !important;
+      }
+      th {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+      }
+    }
+    .print-only {
+      display: none;
+    }
+    .crossed-off {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
+
+  <!-- In-page Modal Overlay -->
+  <div id="modalOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
+    <div id="modalCard" class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 transform transition-all">
+      <h3 id="modalTitle" class="text-lg font-bold text-slate-900 mb-2">Notice</h3>
+      <p id="modalBody" class="text-sm text-slate-600 mb-6"></p>
+      <div id="modalActions" class="flex justify-end gap-3">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Educational Reference Modal -->
+  <div id="guideModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-brand-700 to-tealbrand-700 text-white flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-bold">CPT Stuck Point Reference Guide</h2>
+          <p class="text-xs text-brand-100">Cognitive Processing Therapy (Resick, Monson, & Chard)</p>
+        </div>
+        <button id="closeGuideBtn" class="text-white/80 hover:text-white text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+        <div>
+          <h3 class="font-bold text-brand-800 text-base mb-1">1. What is a "Stuck Point"?</h3>
+          <p class="mb-2">A Stuck Point is a concise, declarative belief or thought formed during or after a trauma that keeps you stuck in PTSD symptoms, guilt, shame, fear, or helplessness. It is <strong>NOT</strong> a feeling, and <strong>NOT</strong> a pure objective fact.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+            <div class="p-2 bg-red-50 text-red-900 rounded border border-red-200">
+              <span class="font-bold block">❌ Feeling (Not a Stuck Point):</span>
+              "I feel terrified and disgusted."
+            </div>
+            <div class="p-2 bg-amber-50 text-amber-900 rounded border border-amber-200">
+              <span class="font-bold block">⚠️ Objective Fact (Not a Stuck Point):</span>
+              "The assault occurred at 11 PM."
+            </div>
+            <div class="p-2 bg-emerald-50 text-emerald-900 rounded border border-emerald-200">
+              <span class="font-bold block">✅ Stuck Point (Belief Statement):</span>
+              "Because I stayed out late, it is entirely my fault."
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-brand-800 text-base mb-1">2. The 5 Core CPT Themes</h3>
+          <ul class="space-y-1.5 list-disc list-inside">
+            <li><strong>Safety:</strong> Beliefs about harm, protection, vulnerability, and danger (e.g., <em>"Nowhere is safe," "I cannot protect my family."</em>).</li>
+            <li><strong>Trust:</strong> Beliefs about relying on one's own judgment or trusting others (e.g., <em>"People are deceitful," "I can never trust my instincts."</em>).</li>
+            <li><strong>Power / Control:</strong> Beliefs about agency, influence, and helplessness (e.g., <em>"I must control everything," "I have zero control over my life."</em>).</li>
+            <li><strong>Esteem:</strong> Beliefs about self-worth, respect, being damaged, or viewing humanity cynically (e.g., <em>"I am permanently broken," "I am unlovable."</em>).</li>
+            <li><strong>Intimacy:</strong> Beliefs about emotional closeness, vulnerability, and connection (e.g., <em>"If I get close to someone, they will hurt me."</em>).</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-brand-800 text-base mb-1">3. Types of Belief Disruption</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <strong class="text-blue-900 block text-sm mb-1">Assimilation (Self-Blame & Hindsight)</strong>
+              The trauma is forced into prior beliefs. Often sounds like <em>"If only I had..."</em> or <em>"I should have known..."</em>. Causes unwarranted guilt, remorse, and hindsight bias.
+            </div>
+            <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
+              <strong class="text-purple-900 block text-sm mb-1">Over-Accommodation (Extreme Shift)</strong>
+              Beliefs about the world or self shift to an extreme absolute. Words like <em>"always," "never," "everyone," "nobody"</em> (e.g., <em>"You can't trust anyone"</em>).
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-brand-800 text-base mb-1">4. Crossing Off Stuck Points in CPT</h3>
+          <p>As you work through CPT worksheets (Challenging Questions, Patterns of Problematic Thinking, Alternative Thoughts), you will develop <strong>Accommodated Thoughts</strong> (balanced, realistic beliefs). When your belief in the original stuck point drops significantly, you celebrate recovery by <strong>crossing it off</strong> your log!</p>
+        </div>
+      </div>
+      <div class="px-6 py-3 bg-slate-100 border-t border-slate-200 flex justify-end">
+        <button id="closeGuideBottomBtn" class="px-4 py-2 bg-brand-700 text-white rounded-lg font-medium hover:bg-brand-800 transition">Close Guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Banner -->
+  <header class="bg-gradient-to-r from-brand-800 via-brand-700 to-tealbrand-700 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-white/20 px-2 py-0.5 rounded text-xs uppercase tracking-wider font-semibold">Cognitive Processing Therapy</span>
+            <span class="bg-tealbrand-500/30 text-teal-200 px-2 py-0.5 rounded text-xs font-medium">Evidence-Based PTSD Tool</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">Stuck Point Log</h1>
+          <p class="text-xs sm:text-sm text-brand-100 mt-1 max-w-2xl">
+            Track, examine, and resolve trauma-related beliefs. In CPT, keep this log at the front of your therapy binder and cross off thoughts as your beliefs heal.
+          </p>
+        </div>
+        <!-- Quick Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2 no-print">
+          <button id="openGuideBtn" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg backdrop-blur transition border border-white/20">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            CPT Guide
+          </button>
+          <button id="loadSamplesBtn" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg backdrop-blur transition border border-white/20">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Load Examples
+          </button>
+          <button id="printBtn" class="inline-flex items-center gap-1.5 px-3 py-2 bg-tealbrand-600 hover:bg-tealbrand-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            Print / PDF
+          </button>
+          <button id="downloadHtmlBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download Log (HTML)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Client Header Form: Input fields for Name, Date, Time, Session -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Client & Session Information
+        </h2>
+        <div class="flex items-center gap-2 no-print">
+          <button id="setNowBtn" class="text-xs font-medium text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded transition">
+            Set Current Date & Time
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Name Input -->
+        <div>
+          <label for="clientNameInput" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+            Client / Participant Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="clientNameInput" placeholder="Enter your full name" 
+                 class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+        </div>
+
+        <!-- Date Input -->
+        <div>
+          <label for="logDateInput" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+            Date <span class="text-red-500">*</span>
+          </label>
+          <input type="date" id="logDateInput" 
+                 class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+        </div>
+
+        <!-- Time Input -->
+        <div>
+          <label for="logTimeInput" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+            Time <span class="text-red-500">*</span>
+          </label>
+          <input type="time" id="logTimeInput" 
+                 class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+        </div>
+
+        <!-- Clinician / Session Note (Optional) -->
+        <div>
+          <label for="clinicianInput" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+            Clinician / Session #
+          </label>
+          <input type="text" id="clinicianInput" placeholder="e.g. Dr. Walker / Session 2" 
+                 class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+        </div>
+      </div>
+
+      <!-- Print View Only Header Block -->
+      <div class="print-only mt-4 pt-3 border-t border-slate-300">
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div><strong>Client Name:</strong> <span id="printClientName">—</span></div>
+          <div><strong>Date & Time:</strong> <span id="printDateTime">—</span></div>
+          <div><strong>Clinician / Session:</strong> <span id="printClinician">—</span></div>
+          <div><strong>Workbook Section:</strong> Section 1 & 2 (Stuck Point Log)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats & Progress Bar -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 no-print">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Recorded</p>
+          <p id="statTotal" class="text-2xl font-black text-slate-900 mt-0.5">0</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-amber-600 uppercase tracking-wider">Active / In Progress</p>
+          <p id="statActive" class="text-2xl font-black text-amber-700 mt-0.5">0</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-emerald-600 uppercase tracking-wider">Crossed Off / Resolved</p>
+          <p id="statResolved" class="text-2xl font-black text-emerald-700 mt-0.5">0</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-brand-600 uppercase tracking-wider">Avg Belief Drop</p>
+          <p id="statBeliefChange" class="text-2xl font-black text-brand-700 mt-0.5">0%</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add New Stuck Point Form (Collapsible/Structured) -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden no-print">
+      <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+          <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider" id="formHeaderTitle">Add New Stuck Point</h2>
+        </div>
+        <span class="text-xs text-slate-500">Formulate as a clear 1-sentence belief</span>
+      </div>
+
+      <form id="stuckPointForm" class="p-5 space-y-4">
+        <input type="hidden" id="editingId" value="">
+
+        <!-- Stuck Point Text Input & Live Guide Tip -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label for="spText" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              Stuck Point Statement (Belief / Thought) <span class="text-red-500">*</span>
+            </label>
+            <span id="cptTipBadge" class="hidden text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              💡 Tip: Frame as a belief (e.g. "Because X, I am..."), not a feeling ("I feel...").
+            </span>
+          </div>
+          <textarea id="spText" rows="2" placeholder='e.g., "If I had paid closer attention, I could have prevented the accident."' 
+                    class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none"></textarea>
+          <p class="text-xs text-slate-500 mt-1">
+            Write what you tell yourself about <em>why</em> it happened, or what it means about <em>you</em>, <em>others</em>, or the <em>world</em>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- CPT Theme / Domain -->
+          <div>
+            <label for="spTheme" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              CPT Theme <span class="text-red-500">*</span>
+            </label>
+            <select id="spTheme" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+              <option value="Safety">Safety (Harm / Protection)</option>
+              <option value="Trust">Trust (Self & Others)</option>
+              <option value="Power/Control">Power & Control (Helplessness)</option>
+              <option value="Esteem">Esteem (Self-Worth / Blame)</option>
+              <option value="Intimacy">Intimacy (Closeness / Isolation)</option>
+              <option value="Self-Blame">Self-Blame / Hindsight</option>
+              <option value="Other">Other Belief</option>
+            </select>
+          </div>
+
+          <!-- Belief Category / Mechanism -->
+          <div>
+            <label for="spCategory" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              Type of Thinking
+            </label>
+            <select id="spCategory" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+              <option value="Assimilation">Assimilation (Self-Blame, Hindsight bias)</option>
+              <option value="Over-Accommodation">Over-Accommodation (Extreme shift, "Everyone/Never")</option>
+              <option value="Accommodated">Accommodated (Balanced & realistic)</option>
+              <option value="Undetermined">Not yet categorized</option>
+            </select>
+          </div>
+
+          <!-- Initial Belief Slider (0 - 100%) -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label for="spInitialBelief" class="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                Initial Belief Rating
+              </label>
+              <span id="spInitialBeliefVal" class="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">100%</span>
+            </div>
+            <input type="range" id="spInitialBelief" min="0" max="100" value="100" step="5"
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+              <span>0% (Don't believe)</span>
+              <span>100% (Completely true)</span>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label for="spStatus" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              Status
+            </label>
+            <select id="spStatus" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+              <option value="Active">Active (Belief persists)</option>
+              <option value="In Progress">In Progress (Examining)</option>
+              <option value="Resolved">Resolved (Crossed Off!)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Accommodation / Reframing Section -->
+        <div class="bg-tealbrand-50/50 p-3.5 rounded-lg border border-tealbrand-100">
+          <div class="flex justify-between items-center mb-1">
+            <label for="spAlternative" class="block text-xs font-semibold text-tealbrand-800 uppercase tracking-wider">
+              Alternative / Accommodated Thought (Balanced Reframe)
+            </label>
+            <span class="text-[11px] text-tealbrand-700">Developed in Session 4+ / Worksheets</span>
+          </div>
+          <textarea id="spAlternative" rows="2" placeholder='e.g., "I did the best I could with the limited information I had at the time; the perpetrator is 100% responsible."' 
+                    class="w-full px-3 py-2 text-sm bg-white border border-tealbrand-200 rounded-lg focus:ring-2 focus:ring-tealbrand-500 transition outline-none"></textarea>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+            <div>
+              <label for="spWorksheetUsed" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                CPT Worksheet or Session Used
+              </label>
+              <select id="spWorksheetUsed" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Not yet examined">Not yet examined</option>
+                <option value="Challenging Questions Worksheet">Challenging Questions Worksheet (Session 4)</option>
+                <option value="Patterns of Problematic Thinking">Patterns of Problematic Thinking (Session 5)</option>
+                <option value="Alternative Thoughts Worksheet">Alternative Thoughts Worksheet (Session 6+)</option>
+                <option value="Safety Module">Safety Module Worksheet (Session 8)</option>
+                <option value="Trust Module">Trust Module Worksheet (Session 9)</option>
+                <option value="Power/Control Module">Power & Control Module (Session 10)</option>
+                <option value="Esteem Module">Esteem Module Worksheet (Session 11)</option>
+                <option value="Intimacy Module">Intimacy Module Worksheet (Session 12)</option>
+              </select>
+            </div>
+
+            <!-- Current / Re-rated Belief (0 - 100%) -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="spCurrentBelief" class="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  Current Belief Rating in Original Stuck Point
+                </label>
+                <span id="spCurrentBeliefVal" class="text-xs font-bold text-tealbrand-700 bg-tealbrand-50 px-2 py-0.5 rounded">100%</span>
+              </div>
+              <input type="range" id="spCurrentBelief" min="0" max="100" value="100" step="5"
+                     class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-tealbrand-600">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0% (Fully unstuck)</span>
+                <span>100% (Fully stuck)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" id="cancelEditBtn" class="hidden px-4 py-2 text-sm text-slate-600 hover:text-slate-800 font-medium rounded-lg border border-slate-300 transition">
+            Cancel
+          </button>
+          <button type="submit" id="saveSpBtn" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm rounded-lg shadow transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span id="submitBtnText">Add Stuck Point to Log</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Stuck Point Log View Table & Controls -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <!-- Toolbar: Filter, Search, Export -->
+      <div class="p-4 bg-slate-50/80 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 no-print">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Filter:</span>
+          <button data-filter="all" class="filter-btn active px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-600 text-white shadow-xs">All (<span id="countAll">0</span>)</button>
+          <button data-filter="active" class="filter-btn px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-slate-600 border border-slate-200 hover:bg-slate-100">Active (<span id="countActive">0</span>)</button>
+          <button data-filter="resolved" class="filter-btn px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-slate-600 border border-slate-200 hover:bg-slate-100">Crossed Off (<span id="countResolved">0</span>)</button>
+          
+          <select id="themeFilter" class="text-xs bg-white border border-slate-200 rounded-md px-2 py-1 outline-none text-slate-600">
+            <option value="all">All Themes</option>
+            <option value="Safety">Safety</option>
+            <option value="Trust">Trust</option>
+            <option value="Power/Control">Power & Control</option>
+            <option value="Esteem">Esteem</option>
+            <option value="Intimacy">Intimacy</option>
+            <option value="Self-Blame">Self-Blame</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1 sm:w-64">
+            <input type="text" id="searchInput" placeholder="Search beliefs or reframes..." 
+                   class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg outline-none focus:ring-1 focus:ring-brand-500">
+            <svg class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+
+          <!-- Secondary Data Menu -->
+          <button id="exportCsvBtn" title="Export as CSV" class="p-1.5 bg-white hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 text-xs font-medium flex items-center gap-1">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span class="hidden sm:inline">CSV</span>
+          </button>
+          <button id="exportJsonBtn" title="Backup as JSON" class="p-1.5 bg-white hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 text-xs font-medium flex items-center gap-1">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span class="hidden sm:inline">JSON</span>
+          </button>
+          <button id="importJsonTrigger" title="Import JSON" class="p-1.5 bg-white hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 text-xs font-medium flex items-center gap-1">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span class="hidden sm:inline">Import</span>
+          </button>
+          <input type="file" id="jsonFileInput" accept=".json" class="hidden">
+          <button id="clearAllBtn" title="Clear all log entries" class="p-1.5 bg-white hover:bg-red-50 text-red-600 rounded-lg border border-slate-200 text-xs font-medium flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span class="hidden sm:inline">Clear</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table View for Desktop & Print -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+              <th class="py-3 px-3 w-12 text-center">#</th>
+              <th class="py-3 px-3 w-28">Date & Time</th>
+              <th class="py-3 px-4 min-w-[220px]">Stuck Point (Original Thought)</th>
+              <th class="py-3 px-3 w-32">Theme & Category</th>
+              <th class="py-3 px-3 w-24 text-center">Initial Belief</th>
+              <th class="py-3 px-4 min-w-[220px]">Alternative / Accommodated Thought</th>
+              <th class="py-3 px-3 w-24 text-center">Current Belief</th>
+              <th class="py-3 px-3 w-28 text-center">Status</th>
+              <th class="py-3 px-3 w-32 text-center no-print">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stuckPointTableBody" class="divide-y divide-slate-200 text-sm">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden p-12 text-center">
+        <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">Your Stuck Point Log is Empty</h3>
+        <p class="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4">
+          Add your first stuck point from your Impact Statement above, or click "Load Examples" to explore clinical examples.
+        </p>
+        <button id="emptyLoadBtn" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-semibold hover:bg-brand-500 transition">
+          Load Sample CPT Stuck Points
+        </button>
+      </div>
+    </section>
+
+    <!-- Clinical Protocol Notes Footer -->
+    <footer class="text-xs text-slate-500 space-y-2 border-t border-slate-200 pt-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p><strong>CPT Protocol Guidance:</strong> Keep this log in the front of your therapy materials. Add stuck points as they arise from natural recovery obstacles, triggers, or worksheets.</p>
+        <p class="text-slate-400">Cognitive Processing Therapy (CPT) • Standard Protocol</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Interactive Logic -->
+  <script>
+    // Storage Key
+    const STORAGE_KEY = 'cpt_stuck_point_log_data_v1';
+
+    // State
+    let logState = {
+      clientName: '',
+      logDate: '',
+      logTime: '',
+      clinician: '',
+      stuckPoints: []
+    };
+
+    let currentFilter = 'all';
+    let currentThemeFilter = 'all';
+    let searchQuery = '';
+
+    // Sample CPT Clinical Data
+    const SAMPLE_STUCK_POINTS = [
+      {
+        id: 'sp_1',
+        timestamp: new Date(Date.now() - 86400000 * 5).toISOString(),
+        dateTimeFormatted: '2026-10-13 09:30',
+        text: 'If I had paid closer attention to the warning signs, this never would have happened.',
+        theme: 'Esteem',
+        category: 'Assimilation',
+        initialBelief: 95,
+        worksheet: 'Challenging Questions Worksheet',
+        alternativeThought: 'I made the safest choices I could with the knowledge I had at the time. I cannot predict the future, and the fault lies solely with the perpetrator.',
+        currentBelief: 15,
+        status: 'Resolved'
+      },
+      {
+        id: 'sp_2',
+        timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
+        dateTimeFormatted: '2026-10-15 14:15',
+        text: 'People in positions of authority can never be trusted under any circumstances.',
+        theme: 'Trust',
+        category: 'Over-Accommodation',
+        initialBelief: 100,
+        worksheet: 'Alternative Thoughts Worksheet',
+        alternativeThought: 'While some individuals abuse authority, many people are dedicated and trustworthy. Trust should be evaluated gradually based on specific behavioral evidence.',
+        currentBelief: 30,
+        status: 'In Progress'
+      },
+      {
+        id: 'sp_3',
+        timestamp: new Date(Date.now() - 86400000 * 1).toISOString(),
+        dateTimeFormatted: '2026-10-17 11:00',
+        text: 'Nowhere in public is safe; harm can occur anywhere at any second.',
+        theme: 'Safety',
+        category: 'Over-Accommodation',
+        initialBelief: 90,
+        worksheet: 'Patterns of Problematic Thinking',
+        alternativeThought: 'No environment is 100% risk-free, but most places I visit are reasonably safe. I can take sensible precautions without living in constant isolation.',
+        currentBelief: 45,
+        status: 'In Progress'
+      },
+      {
+        id: 'sp_4',
+        timestamp: new Date().toISOString(),
+        dateTimeFormatted: '2026-10-18 01:00',
+        text: 'I should have fought harder instead of freezing during the incident.',
+        theme: 'Power/Control',
+        category: 'Assimilation',
+        initialBelief: 100,
+        worksheet: 'Not yet examined',
+        alternativeThought: '',
+        currentBelief: 100,
+        status: 'Active'
+      }
+    ];
+
+    // Helper: Toast Notifications
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const bgColors = {
+        success: 'bg-emerald-600 text-white',
+        error: 'bg-red-600 text-white',
+        info: 'bg-slate-800 text-white',
+        warning: 'bg-amber-600 text-white'
+      };
+
+      toast.className = `${bgColors[type] || bgColors.info} px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 pointer-events-auto max-w-sm`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button class="ml-auto text-white/80 hover:text-white font-bold">&times;</button>
+      `;
+
+      toast.querySelector('button').addEventListener('click', () => {
+        toast.remove();
+      });
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-4');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Helper: In-page Modal (No alert/confirm)
+    function showModal({ title, body, confirmText = 'Confirm', cancelText = 'Cancel', onConfirm }) {
+      const overlay = document.getElementById('modalOverlay');
+      const titleEl = document.getElementById('modalTitle');
+      const bodyEl = document.getElementById('modalBody');
+      const actionsEl = document.getElementById('modalActions');
+
+      titleEl.textContent = title;
+      bodyEl.textContent = body;
+      actionsEl.innerHTML = '';
+
+      if (cancelText) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg transition';
+        cancelBtn.textContent = cancelText;
+        cancelBtn.addEventListener('click', () => {
+          overlay.classList.add('hidden');
+        });
+        actionsEl.appendChild(cancelBtn);
+      }
+
+      const confirmBtn = document.createElement('button');
+      confirmBtn.className = 'px-4 py-2 text-xs font-semibold bg-brand-600 hover:bg-brand-500 text-white rounded-lg shadow transition';
+      confirmBtn.textContent = confirmText;
+      confirmBtn.addEventListener('click', () => {
+        overlay.classList.add('hidden');
+        if (typeof onConfirm === 'function') onConfirm();
+      });
+      actionsEl.appendChild(confirmBtn);
+
+      overlay.classList.remove('hidden');
+    }
+
+    // Load from LocalStorage
+    function loadSavedData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          logState = Object.assign(logState, parsed);
+        }
+      } catch (e) {
+        console.warn('LocalStorage unavailable or disabled:', e);
+      }
+
+      // Initialize form fields
+      document.getElementById('clientNameInput').value = logState.clientName || '';
+      document.getElementById('logDateInput').value = logState.logDate || '';
+      document.getElementById('logTimeInput').value = logState.logTime || '';
+      document.getElementById('clinicianInput').value = logState.clinician || '';
+
+      // If date/time not set, default to today
+      if (!logState.logDate || !logState.logTime) {
+        setDefaultDateTime();
+      }
+
+      updatePrintHeader();
+      renderLog();
+    }
+
+    // Save to LocalStorage
+    function persistData() {
+      try {
+        logState.clientName = document.getElementById('clientNameInput').value.trim();
+        logState.logDate = document.getElementById('logDateInput').value;
+        logState.logTime = document.getElementById('logTimeInput').value;
+        logState.clinician = document.getElementById('clinicianInput').value.trim();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(logState));
+      } catch (e) {
+        console.warn('LocalStorage save failed:', e);
+      }
+      updatePrintHeader();
+      updateStats();
+    }
+
+    function setDefaultDateTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      if (!document.getElementById('logDateInput').value) {
+        document.getElementById('logDateInput').value = `${year}-${month}-${day}`;
+        logState.logDate = `${year}-${month}-${day}`;
+      }
+      if (!document.getElementById('logTimeInput').value) {
+        document.getElementById('logTimeInput').value = `${hours}:${minutes}`;
+        logState.logTime = `${hours}:${minutes}`;
+      }
+    }
+
+    function updatePrintHeader() {
+      const name = document.getElementById('clientNameInput').value.trim() || '—';
+      const d = document.getElementById('logDateInput').value || '—';
+      const t = document.getElementById('logTimeInput').value || '';
+      const clin = document.getElementById('clinicianInput').value.trim() || '—';
+
+      document.getElementById('printClientName').textContent = name;
+      document.getElementById('printDateTime').textContent = `${d} ${t}`.trim();
+      document.getElementById('printClinician').textContent = clin;
+    }
+
+    // Update Statistics
+    function updateStats() {
+      const total = logState.stuckPoints.length;
+      const resolved = logState.stuckPoints.filter(p => p.status === 'Resolved').length;
+      const active = total - resolved;
+
+      let totalDrop = 0;
+      let countWithReframe = 0;
+
+      logState.stuckPoints.forEach(p => {
+        if (p.initialBelief !== undefined && p.currentBelief !== undefined) {
+          totalDrop += (p.initialBelief - p.currentBelief);
+          countWithReframe++;
+        }
+      });
+
+      const avgDrop = countWithReframe > 0 ? Math.round(totalDrop / countWithReframe) : 0;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statResolved').textContent = resolved;
+      document.getElementById('statBeliefChange').textContent = avgDrop >= 0 ? `-${avgDrop}%` : `+${Math.abs(avgDrop)}%`;
+
+      document.getElementById('countAll').textContent = total;
+      document.getElementById('countActive').textContent = active;
+      document.getElementById('countResolved').textContent = resolved;
+    }
+
+    // Theme Badges Styling
+    function getThemeBadge(theme) {
+      const themes = {
+        'Safety': 'bg-red-50 text-red-700 border-red-200',
+        'Trust': 'bg-blue-50 text-blue-700 border-blue-200',
+        'Power/Control': 'bg-purple-50 text-purple-700 border-purple-200',
+        'Esteem': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        'Intimacy': 'bg-pink-50 text-pink-700 border-pink-200',
+        'Self-Blame': 'bg-amber-50 text-amber-700 border-amber-200'
+      };
+      const cls = themes[theme] || 'bg-slate-100 text-slate-700 border-slate-200';
+      return `<span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${cls}">${theme}</span>`;
+    }
+
+    // Status Badges
+    function getStatusBadge(status) {
+      if (status === 'Resolved') {
+        return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  Crossed Off
+                </span>`;
+      }
+      if (status === 'In Progress') {
+        return `<span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">In Progress</span>`;
+      }
+      return `<span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">Active</span>`;
+    }
+
+    // Render Table
+    function renderLog() {
+      const tbody = document.getElementById('stuckPointTableBody');
+      const emptyState = document.getElementById('emptyState');
+      tbody.innerHTML = '';
+
+      let items = logState.stuckPoints;
+
+      // Filter Status
+      if (currentFilter === 'active') {
+        items = items.filter(p => p.status !== 'Resolved');
+      } else if (currentFilter === 'resolved') {
+        items = items.filter(p => p.status === 'Resolved');
+      }
+
+      // Filter Theme
+      if (currentThemeFilter !== 'all') {
+        items = items.filter(p => p.theme === currentThemeFilter);
+      }
+
+      // Filter Search
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        items = items.filter(p => 
+          p.text.toLowerCase().includes(q) || 
+          (p.alternativeThought && p.alternativeThought.toLowerCase().includes(q)) ||
+          p.theme.toLowerCase().includes(q)
+        );
+      }
+
+      if (logState.stuckPoints.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      if (items.length === 0 && logState.stuckPoints.length > 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-xs text-slate-400">No stuck points match your active filter.</td></tr>`;
+        updateStats();
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        const isResolved = item.status === 'Resolved';
+        tr.className = `hover:bg-slate-50/70 transition-colors ${isResolved ? 'bg-slate-50/40' : ''}`;
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-center text-xs font-bold text-slate-500">${index + 1}</td>
+          <td class="py-3 px-3 text-xs text-slate-500 whitespace-nowrap">
+            <div>${item.dateTimeFormatted || '—'}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${item.worksheet || ''}</div>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-medium text-slate-900 leading-snug ${isResolved ? 'crossed-off' : ''}">${escapeHtml(item.text)}</div>
+            ${isResolved ? '<span class="inline-block mt-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-semibold">Accommodated / Unstuck</span>' : ''}
+          </td>
+          <td class="py-3 px-3">
+            <div class="flex flex-col gap-1 items-start">
+              ${getThemeBadge(item.theme)}
+              <span class="text-[10px] text-slate-500">${item.category}</span>
+            </div>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <span class="font-bold text-xs ${item.initialBelief > 75 ? 'text-red-700' : 'text-slate-700'}">${item.initialBelief}%</span>
+          </td>
+          <td class="py-3 px-4 text-xs">
+            ${item.alternativeThought ? `<div class="text-tealbrand-900 bg-tealbrand-50/50 p-2 rounded border border-tealbrand-100 italic">"${escapeHtml(item.alternativeThought)}"</div>` : '<span class="text-slate-400 italic">Worksheet in progress...</span>'}
+          </td>
+          <td class="py-3 px-3 text-center">
+            <div class="inline-flex flex-col items-center">
+              <span class="font-bold text-xs ${item.currentBelief < 30 ? 'text-emerald-700' : 'text-amber-700'}">${item.currentBelief}%</span>
+              ${item.initialBelief > item.currentBelief ? `<span class="text-[10px] text-emerald-600 font-semibold">-${item.initialBelief - item.currentBelief}%</span>` : ''}
+            </div>
+          </td>
+          <td class="py-3 px-3 text-center">
+            ${getStatusBadge(item.status)}
+          </td>
+          <td class="py-3 px-3 text-center no-print">
+            <div class="flex items-center justify-center gap-1.5">
+              <button data-action="toggle-resolve" data-id="${item.id}" title="${isResolved ? 'Mark active' : 'Cross off (Resolved!)'}" 
+                      class="p-1.5 rounded-lg border ${isResolved ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100' : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-100 hover:text-emerald-600'} transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              </button>
+              <button data-action="edit" data-id="${item.id}" title="Edit stuck point" 
+                      class="p-1.5 rounded-lg border bg-white border-slate-300 text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              </button>
+              <button data-action="delete" data-id="${item.id}" title="Delete" 
+                      class="p-1.5 rounded-lg border bg-white border-slate-300 text-slate-600 hover:bg-red-50 hover:text-red-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      updateStats();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+    }
+
+    // Toggle Resolve (Cross off)
+    function toggleResolve(id) {
+      const item = logState.stuckPoints.find(p => p.id === id);
+      if (!item) return;
+
+      if (item.status === 'Resolved') {
+        item.status = 'In Progress';
+        showToast('Stuck point marked back in progress.', 'info');
+      } else {
+        item.status = 'Resolved';
+        // Auto-lower current belief if it was still high
+        if (item.currentBelief > 20) {
+          item.currentBelief = 10;
+        }
+        showToast('🎉 Stuck point crossed off! Great progress on your CPT recovery.', 'success');
+      }
+      persistData();
+      renderLog();
+    }
+
+    // Edit Item
+    function editItem(id) {
+      const item = logState.stuckPoints.find(p => p.id === id);
+      if (!item) return;
+
+      document.getElementById('editingId').value = item.id;
+      document.getElementById('spText').value = item.text;
+      document.getElementById('spTheme').value = item.theme;
+      document.getElementById('spCategory').value = item.category;
+      document.getElementById('spInitialBelief').value = item.initialBelief;
+      document.getElementById('spInitialBeliefVal').textContent = `${item.initialBelief}%`;
+      document.getElementById('spStatus').value = item.status;
+      document.getElementById('spAlternative').value = item.alternativeThought || '';
+      document.getElementById('spWorksheetUsed').value = item.worksheet || 'Not yet examined';
+      document.getElementById('spCurrentBelief').value = item.currentBelief !== undefined ? item.currentBelief : item.initialBelief;
+      document.getElementById('spCurrentBeliefVal').textContent = `${document.getElementById('spCurrentBelief').value}%`;
+
+      document.getElementById('formHeaderTitle').textContent = `Editing Stuck Point #${logState.stuckPoints.indexOf(item) + 1}`;
+      document.getElementById('submitBtnText').textContent = 'Update Stuck Point';
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+      // Scroll to form
+      document.getElementById('stuckPointForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Cancel Edit
+    function cancelEdit() {
+      document.getElementById('editingId').value = '';
+      document.getElementById('stuckPointForm').reset();
+      document.getElementById('spInitialBeliefVal').textContent = '100%';
+      document.getElementById('spCurrentBeliefVal').textContent = '100%';
+      document.getElementById('formHeaderTitle').textContent = 'Add New Stuck Point';
+      document.getElementById('submitBtnText').textContent = 'Add Stuck Point to Log';
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+      document.getElementById('cptTipBadge').classList.add('hidden');
+    }
+
+    // Delete Item
+    function deleteItem(id) {
+      showModal({
+        title: 'Delete Stuck Point?',
+        body: 'Are you sure you want to remove this stuck point from your log? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        onConfirm: () => {
+          logState.stuckPoints = logState.stuckPoints.filter(p => p.id !== id);
+          persistData();
+          renderLog();
+          showToast('Stuck point removed.', 'info');
+        }
+      });
+    }
+
+    // Download Complete Standalone HTML
+    function downloadHtmlFile() {
+      // Create a fresh clone of the document
+      const clientName = document.getElementById('clientNameInput').value.trim() || 'Client';
+      const cleanFileName = `CPT_Stuck_Point_Log_${clientName.replace(/[^a-zA-Z0-9_-]/g, '_')}.html`;
+
+      // Embed the current state directly into the script tag for standalone offline opening
+      const htmlString = `<!DOCTYPE html>
+${document.documentElement.outerHTML}`;
+
+      // Replace or update embedded initial state so offline opened file carries data
+      // Replace or update embedded initial state so offline opened file carries data
+      const stateInjection = '<' + 'script>\n' +
+        '    // Embedded Client State for Downloaded Log\n' +
+        '    window.EMBEDDED_CPT_STATE = ' + JSON.stringify(logState, null, 2) + ';\n' +
+        '  <' + '/script>\n';
+
+      const finalizedHtml = htmlString.replace('</head>', stateInjection + '</head>');
+
+      const blob = new Blob([finalizedHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = cleanFileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Download started! You can open this file anytime in your web browser.', 'success');
+    }
+
+    // Export CSV
+    function exportToCsv() {
+      if (logState.stuckPoints.length === 0) {
+        showToast('No entries to export.', 'warning');
+        return;
+      }
+
+      const client = document.getElementById('clientNameInput').value.trim() || 'Client';
+      const headers = ['Item #', 'Date & Time', 'Stuck Point Statement', 'Theme', 'Thinking Type', 'Initial Belief (%)', 'Worksheet Used', 'Alternative Thought', 'Current Belief (%)', 'Status'];
+      
+      const rows = logState.stuckPoints.map((item, idx) => [
+        idx + 1,
+        `"${(item.dateTimeFormatted || '').replace(/"/g, '""')}"`,
+        `"${(item.text || '').replace(/"/g, '""')}"`,
+        `"${(item.theme || '').replace(/"/g, '""')}"`,
+        `"${(item.category || '').replace(/"/g, '""')}"`,
+        item.initialBelief,
+        `"${(item.worksheet || '').replace(/"/g, '""')}"`,
+        `"${(item.alternativeThought || '').replace(/"/g, '""')}"`,
+        item.currentBelief,
+        `"${(item.status || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `CPT_Stuck_Point_Log_${client.replace(/[^a-zA-Z0-9_-]/g, '_')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Exported to CSV successfully.', 'success');
+    }
+
+    // Export JSON
+    function exportToJson() {
+      const client = document.getElementById('clientNameInput').value.trim() || 'Client';
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logState, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `CPT_Stuck_Point_Backup_${client.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('JSON backup downloaded.', 'success');
+    }
+
+    // Import JSON
+    function handleJsonImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.stuckPoints)) {
+            logState = parsed;
+            persistData();
+            loadSavedData();
+            showToast('Log successfully restored from backup!', 'success');
+          } else {
+            showToast('Invalid backup file format.', 'error');
+          }
+        } catch (err) {
+          showToast('Failed to parse JSON file.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Set Current Date & Time Action
+    function setNowAction() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      document.getElementById('logDateInput').value = `${year}-${month}-${day}`;
+      document.getElementById('logTimeInput').value = `${hours}:${minutes}`;
+      persistData();
+      showToast('Date and time set to current.', 'info');
+    }
+
+    // Event Listeners Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if opened from a downloaded standalone file with embedded state
+      if (window.EMBEDDED_CPT_STATE && Array.isArray(window.EMBEDDED_CPT_STATE.stuckPoints)) {
+        logState = window.EMBEDDED_CPT_STATE;
+      }
+
+      loadSavedData();
+
+      // Form Text live tip
+      const spTextInput = document.getElementById('spText');
+      const cptTipBadge = document.getElementById('cptTipBadge');
+      spTextInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim().toLowerCase();
+        if (val.startsWith('i feel') || val.startsWith('feeling')) {
+          cptTipBadge.classList.remove('hidden');
+        } else {
+          cptTipBadge.classList.add('hidden');
+        }
+      });
+
+      // Range Sliders
+      const initialSlider = document.getElementById('spInitialBelief');
+      const initialVal = document.getElementById('spInitialBeliefVal');
+      initialSlider.addEventListener('input', () => {
+        initialVal.textContent = `${initialSlider.value}%`;
+      });
+
+      const currentSlider = document.getElementById('spCurrentBelief');
+      const currentVal = document.getElementById('spCurrentBeliefVal');
+      currentSlider.addEventListener('input', () => {
+        currentVal.textContent = `${currentSlider.value}%`;
+      });
+
+      // Save Form Submit
+      document.getElementById('stuckPointForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = document.getElementById('spText').value.trim();
+        if (!text) {
+          showToast('Please enter a Stuck Point thought or belief.', 'warning');
+          document.getElementById('spText').focus();
+          return;
+        }
+
+        const editingId = document.getElementById('editingId').value;
+        const theme = document.getElementById('spTheme').value;
+        const category = document.getElementById('spCategory').value;
+        const initialBelief = parseInt(document.getElementById('spInitialBelief').value, 10);
+        const status = document.getElementById('spStatus').value;
+        const alternativeThought = document.getElementById('spAlternative').value.trim();
+        const worksheet = document.getElementById('spWorksheetUsed').value;
+        const currentBelief = parseInt(document.getElementById('spCurrentBelief').value, 10);
+
+        const now = new Date();
+        const formattedDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+        if (editingId) {
+          // Update
+          const item = logState.stuckPoints.find(p => p.id === editingId);
+          if (item) {
+            item.text = text;
+            item.theme = theme;
+            item.category = category;
+            item.initialBelief = initialBelief;
+            item.status = status;
+            item.alternativeThought = alternativeThought;
+            item.worksheet = worksheet;
+            item.currentBelief = currentBelief;
+            showToast('Stuck point updated.', 'success');
+          }
+          cancelEdit();
+        } else {
+          // New
+          const newItem = {
+            id: 'sp_' + Date.now(),
+            timestamp: now.toISOString(),
+            dateTimeFormatted: formattedDate,
+            text,
+            theme,
+            category,
+            initialBelief,
+            status,
+            alternativeThought,
+            worksheet,
+            currentBelief
+          };
+          logState.stuckPoints.unshift(newItem);
+          showToast('Stuck point added to log.', 'success');
+          cancelEdit();
+        }
+
+        persistData();
+        renderLog();
+      });
+
+      // Header input auto-saving
+      ['clientNameInput', 'logDateInput', 'logTimeInput', 'clinicianInput'].forEach(id => {
+        document.getElementById(id).addEventListener('input', persistData);
+      });
+
+      // Set Now Button
+      document.getElementById('setNowBtn').addEventListener('click', setNowAction);
+
+      // Cancel Edit Button
+      document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+
+      // Table Action Delegations
+      document.getElementById('stuckPointTableBody').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
+
+        if (action === 'toggle-resolve') {
+          toggleResolve(id);
+        } else if (action === 'edit') {
+          editItem(id);
+        } else if (action === 'delete') {
+          deleteItem(id);
+        }
+      });
+
+      // Filter Buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active', 'bg-brand-600', 'text-white');
+            b.classList.add('bg-white', 'text-slate-600');
+          });
+          btn.classList.add('active', 'bg-brand-600', 'text-white');
+          btn.classList.remove('bg-white', 'text-slate-600');
+          currentFilter = btn.getAttribute('data-filter');
+          renderLog();
+        });
+      });
+
+      // Theme Filter Select
+      document.getElementById('themeFilter').addEventListener('change', (e) => {
+        currentThemeFilter = e.target.value;
+        renderLog();
+      });
+
+      // Search input
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderLog();
+      });
+
+      // Educational Guide Modal Triggers
+      const guideModal = document.getElementById('guideModal');
+      document.getElementById('openGuideBtn').addEventListener('click', () => {
+        guideModal.classList.remove('hidden');
+      });
+      document.getElementById('closeGuideBtn').addEventListener('click', () => {
+        guideModal.classList.add('hidden');
+      });
+      document.getElementById('closeGuideBottomBtn').addEventListener('click', () => {
+        guideModal.classList.add('hidden');
+      });
+
+      // Load Clinical Samples
+      const loadSamples = () => {
+        logState.stuckPoints = JSON.parse(JSON.stringify(SAMPLE_STUCK_POINTS));
+        if (!logState.clientName) {
+          logState.clientName = 'Clinical Example Case';
+          document.getElementById('clientNameInput').value = logState.clientName;
+        }
+        persistData();
+        renderLog();
+        showToast('Sample CPT clinical stuck points loaded.', 'success');
+      };
+
+      document.getElementById('loadSamplesBtn').addEventListener('click', () => {
+        if (logState.stuckPoints.length > 0) {
+          showModal({
+            title: 'Load Clinical Examples?',
+            body: 'This will replace your current entries with standard CPT clinical example stuck points across Safety, Trust, Esteem, and Control.',
+            confirmText: 'Load Examples',
+            cancelText: 'Cancel',
+            onConfirm: loadSamples
+          });
+        } else {
+          loadSamples();
+        }
+      });
+
+      document.getElementById('emptyLoadBtn').addEventListener('click', loadSamples);
+
+      // Print / PDF Button
+      document.getElementById('printBtn').addEventListener('click', () => {
+        updatePrintHeader();
+        window.print();
+      });
+
+      // Download HTML Button
+      document.getElementById('downloadHtmlBtn').addEventListener('click', downloadHtmlFile);
+
+      // CSV Export
+      document.getElementById('exportCsvBtn').addEventListener('click', exportToCsv);
+
+      // JSON Export
+      document.getElementById('exportJsonBtn').addEventListener('click', exportToJson);
+
+      // JSON Import
+      document.getElementById('importJsonTrigger').addEventListener('click', () => {
+        document.getElementById('jsonFileInput').click();
+      });
+      document.getElementById('jsonFileInput').addEventListener('change', handleJsonImport);
+
+      // Clear All
+      document.getElementById('clearAllBtn').addEventListener('click', () => {
+        showModal({
+          title: 'Clear Stuck Point Log?',
+          body: 'Are you sure you want to delete all stuck points in this log? This cannot be undone.',
+          confirmText: 'Clear All',
+          cancelText: 'Keep Entries',
+          onConfirm: () => {
+            logState.stuckPoints = [];
+            persistData();
+            renderLog();
+            showToast('All log entries cleared.', 'info');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
